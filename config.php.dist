@@ -5,5 +5,6 @@ define('HOMER_TIMER', 0.1);
 define('HOMER_DEEP', 3);
 define('HOMER_KEEP_HOST', true);
 define('HOMER_LIMITER_TIME', 60 * 60);
+define('HOMER_STAT', true);
 define('HOMER_HTTP_HOST', 'localhost');
 define('HOMER_HTTP_PORT', 1337);

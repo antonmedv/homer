@@ -10,11 +10,6 @@ $dnsResolver = $dnsResolverFactory->createCached(HOMER_RESOLVER_ADDRESS, $loop);
 $factory = new React\HttpClient\Factory();
 $client = $factory->create($loop, $dnsResolver);
 
-$socket = new React\Socket\Server($loop);
-$http = new React\Http\Server($socket, $loop);
-
-$stat = new Homer\Statistic();
-
 $db = new PDO(HOMER_DNS);
 $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 $queue = new Homer\Queue($db);
@@ -36,11 +31,17 @@ $loop->addPeriodicTimer(HOMER_TIMER, function ($timer) use ($client, $queue, $se
     $limiter->release(HOMER_LIMITER_TIME);
 });
 
-$loop->addPeriodicTimer(HOMER_TIMER, function ($timer) use ($stat) {
-    $stat->add('memory', memory_get_usage(true) / (1024 * 1024));
-});
+if (HOMER_STAT) {
+    $socket = new React\Socket\Server($loop);
+    $http = new React\Http\Server($socket, $loop);
+    $stat = new Homer\Statistic();
 
-$http->on('request', array($stat, 'app'));
-$socket->listen(HOMER_HTTP_PORT);
+    $loop->addPeriodicTimer(HOMER_TIMER, function ($timer) use ($stat) {
+        $stat->add('memory', memory_get_usage(true) / (1024 * 1024));
+    });
+
+    $http->on('request', array($stat, 'app'));
+    $socket->listen(HOMER_HTTP_PORT);
+}
 
 $loop->run();
