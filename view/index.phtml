@@ -1,0 +1,102 @@
+<?php include 'header.phtml'; ?>
+
+<?php if ($app['request']->query->has('success')): ?>
+    <?php if ($app['request']->query->get('success', false)): ?>
+        <div class="alert alert-success">
+            Successfully added new url.
+        </div>
+    <?php else: ?>
+        <div class="alert alert-error">
+            Url was not added. Error in url.
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+    <div class="input-append">
+        <form class="search" action="<?= $app['url_generator']->generate('search') ?>" method="get">
+            <input class="input-xxlarge" type="text" name="search" value="<?= $app->escape($search) ?>">
+            <button class="btn" type="submit">Search</button>
+            <div class="btn-group">
+                <button class="btn dropdown-toggle" data-toggle="dropdown" data-target="#">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right">
+                    <li><a tabindex="-1" href="#add" data-toggle="modal">Add URL</a></li>
+                    <li><a tabindex="-1" href="<?= $app['url_generator']->generate('statistic') ?>">Statistic</a></li>
+                    <li><a tabindex="-1" href="#help" data-toggle="modal">Help</a></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+<?php if (!empty($search)): ?>
+    <?php if (!empty($result)): ?>
+        <ol>
+            <?php foreach ($result as $i => $row): ?>
+                <li>
+                    <h4>
+                        <a href="<?= $row['url'] ?>" target="_blank"><?= $row['title'] ?></a>
+                    </h4>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    <?php else: ?>
+        <div class="well well-small">
+            <h4>Nothing found.</h4>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+    <!-- Add -->
+    <div id="add" class="modal hide fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Add URL</h3>
+        </div>
+        <div class="modal-body">
+            <div class="input-append">
+                <form action="<?= $app['url_generator']->generate('add') ?>" method="post">
+                    <input class="input-xlarge" type="text" name="url" placeholder="http://">
+                    <button class="btn" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help -->
+    <div id="help" class="modal hide fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Help</h3>
+        </div>
+        <div class="modal-body">
+            <h4>Query examples:</h4>
+
+            <ul>
+                <li><b>lin*</b> &mdash; Query for all documents containing a term with the prefix "lin". This will match
+                    all documents that contain "linux", but also those that contain terms "linear",
+                    "linker", "linguistic" and so on.
+                </li>
+                <li><b>title:linux problems</b> &mdash; Query the database for documents for which the term "linux"
+                    appears in
+                    the document title, and the term "problems" appears in either the title
+                    or body of the document.
+                </li>
+                <li><b>"linux applications"</b> &mdash; Query for all documents that contain the phrase "linux
+                    applications".
+                </li>
+                <li><b>"lin* app*"</b> &mdash; Query for all documents that contain a phrase that matches "lin* app*".
+                    As well
+                    as
+                    "linux applications", this will match common phrases such as "linoleum appliances"
+                    or "link apprentice".
+                </li>
+                <li><b>one AND two OR three NOT that</b> &mdash; Query with operators in upper case.</li>
+                <li><b>one -two</b> &mdash; Search for the set of documents that contain the term "one" but do
+                    not contain the term "two".
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<?php include 'footer.phtml' ?>

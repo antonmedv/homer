@@ -1,0 +1,4 @@
+/vendor/
+/open/
+config.php
+composer.lock

@@ -1,0 +1,43 @@
+<?php include 'header.phtml'; ?>
+
+    <style>
+        #holder {
+            margin: 0 auto;
+            width: 640px;
+            height: 240px;
+        }
+    </style>
+    <script src="<?= $app['request']->getBasePath() ?>/js/raphael.js"></script>
+    <script src="<?= $app['request']->getBasePath() ?>/js/g.raphael.js"></script>
+    <script src="<?= $app['request']->getBasePath() ?>/js/g.line.js"></script>
+
+    <h1>Statistic</h1>
+
+    <div id="holder"></div>
+
+    <script>
+        function draw(data) {
+            var r = Raphael("holder");
+            var style = { font: "12px sans-serif" };
+
+            var x = [];
+            var y = [];
+            for (var i = 0; i < data.length; i++) {
+                x[i] = i;
+                y[i] = parseFloat(data[i]);
+            }
+
+            r.text(250, 10, "PHP Memory Usage (in megabytes)").attr(style);
+
+            r.linechart(20, 20, 500, 200, x, [y], { shade: true, axis: "0 0 0 1"});
+        }
+
+        $(function () {
+            $.get('http://<?= HOMER_HTTP_HOST ?>:<?= HOMER_HTTP_PORT ?>', function (data) {
+                draw(data.split(','));
+            });
+        }, 1000);
+    </script>
+
+
+<?php include 'footer.phtml' ?>
