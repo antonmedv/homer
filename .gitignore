@@ -2,3 +2,4 @@
 /open/
 config.php
 composer.lock
+.idea/
