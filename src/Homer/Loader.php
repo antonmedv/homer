@@ -96,7 +96,9 @@ class Loader
         $headers = $this->response->getHeaders();
 
         if (isset($headers['Location'])) {
-            $this->pushQueue($headers['Location'], $this->deep - 1);
+            if ($this->deep > 0) {
+                $this->pushQueue($headers['Location'], $this->deep - 1);
+            }
 
             return;
         }
